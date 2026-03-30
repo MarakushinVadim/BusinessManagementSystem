@@ -1,6 +1,8 @@
 from app.database import Base
 from app.models.task import TaskModel
 
+from fastapi_users.db import SQLAlchemyBaseUserTableUUID
+
 from enum import Enum
 
 from typing import Literal, get_args
@@ -18,14 +20,9 @@ class Role(str, Enum):
 RoleType = Literal["admin", "manager", "user"]
 
 
-class UserModel(Base):
+class UserModel(SQLAlchemyBaseUserTableUUID, Base):
     __tablename__ = "users"
 
-    id: Mapped[int] = mapped_column(primary_key=True)
-    email: Mapped[str] = mapped_column(String, unique=True, index=True, nullable=False)
-    hashed_password: Mapped[str] = mapped_column(String, nullable=False)
-
-    is_superuser: Mapped[bool] = mapped_column(Boolean, default=False)
     role: Mapped[RoleType] = mapped_column(
         Enum(*get_args(RoleType), name="role_enum", metadata=Base.metadata),
         default="user",
