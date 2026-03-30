@@ -1,14 +1,12 @@
-from app.database import Base
-from app.models.task import TaskModel
+from app.config import Base
 
-from fastapi_users.db import SQLAlchemyBaseUserTableUUID
+from fastapi_users_db_sqlalchemy import SQLAlchemyBaseUserTableUUID
 
-from enum import Enum
+from sqlalchemy import Enum
 
 from typing import Literal, get_args
 
-from sqlalchemy import String, Boolean
-from sqlalchemy.orm import Mapped, mapped_column, relationship
+from sqlalchemy.orm import Mapped, mapped_column
 
 
 class Role(str, Enum):
@@ -26,9 +24,4 @@ class UserModel(SQLAlchemyBaseUserTableUUID, Base):
     role: Mapped[RoleType] = mapped_column(
         Enum(*get_args(RoleType), name="role_enum", metadata=Base.metadata),
         default="user",
-    )
-
-    tasks: Mapped[list["TaskModel"]] = relationship(
-        back_populates="author",
-        cascade="all, delete-orphan",
     )

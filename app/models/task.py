@@ -1,13 +1,14 @@
-from app.database import Base
+from app.config import Base
+
 from app.models.user import UserModel
 
 from datetime import datetime
 
 from typing import Literal, get_args
 
-from enum import Enum
+from sqlalchemy import Enum
 
-from sqlalchemy.orm import Mapped, mapped_column, relationship
+from sqlalchemy.orm import Mapped, mapped_column
 from sqlalchemy import ForeignKey, String, DateTime, Integer
 
 
@@ -33,9 +34,8 @@ class TaskModel(Base):
     )
 
     performer_id: Mapped[int] = mapped_column(
-        Integer, ForeignKey("UserModel.id"), nullable=True
+        Integer, ForeignKey("users.id"), nullable=True
     )
     author_id: Mapped[int] = mapped_column(
-        Integer, ForeignKey("UserModel.id"), nullable=False
+        Integer, ForeignKey("users.id"), nullable=False
     )
-    author: Mapped["UserModel"] = relationship(back_populates="tasks")

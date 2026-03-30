@@ -10,7 +10,8 @@ from sqlalchemy import pool
 from alembic import context
 from sqlalchemy.ext.asyncio import create_async_engine
 
-from app.database import Base
+from app.config import Base
+from app import models
 
 from dotenv import load_dotenv
 
