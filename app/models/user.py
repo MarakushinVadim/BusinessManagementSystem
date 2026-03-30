@@ -1,5 +1,5 @@
 from app.database import Base
-from app.models.task import Task
+from app.models.task import TaskModel
 
 from enum import Enum
 
@@ -31,7 +31,7 @@ class UserModel(Base):
         default="user",
     )
 
-    tasks: Mapped[list["Task"]] = relationship(
+    tasks: Mapped[list["TaskModel"]] = relationship(
         back_populates="author",
         cascade="all, delete-orphan",
     )

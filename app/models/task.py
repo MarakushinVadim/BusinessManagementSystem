@@ -20,7 +20,7 @@ class TaskStatus(str, Enum):
 StatusType = Literal["open", "in_work", "done"]
 
 
-class Task(Base):
+class TaskModel(Base):
     __tablename__ = "tasks"
 
     id: Mapped[int] = mapped_column(primary_key=True)
