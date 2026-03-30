@@ -1,5 +1,9 @@
 from app.config import Base
 
+from uuid import UUID
+
+from fastapi_users_db_sqlalchemy.generics import GUID
+
 from app.models.user import UserModel
 
 from datetime import datetime
@@ -33,9 +37,9 @@ class TaskModel(Base):
         default="open",
     )
 
-    performer_id: Mapped[int] = mapped_column(
-        Integer, ForeignKey("users.id"), nullable=True
+    performer_id: Mapped[UUID] = mapped_column(
+        GUID(), ForeignKey("users.id"), nullable=True
     )
-    author_id: Mapped[int] = mapped_column(
-        Integer, ForeignKey("users.id"), nullable=False
+    author_id: Mapped[UUID] = mapped_column(
+        GUID(), ForeignKey("users.id"), nullable=False
     )
