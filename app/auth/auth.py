@@ -41,7 +41,7 @@ class AdminAuth(AdminAuthBack):
                 password, user.hashed_password
             )
 
-            if is_valid and user.is_active and str(user.role) == 'admin':
+            if is_valid and user.is_active and str(user.role) == "admin":
                 strategy = get_jwt_strategy()
                 token = await strategy.write_token(user)
 
@@ -66,5 +66,6 @@ class AdminAuth(AdminAuthBack):
                 return True
 
         return False
+
 
 admin_authentication_backend = AdminAuth(secret_key=SECRET_KEY)

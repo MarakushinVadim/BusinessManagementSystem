@@ -36,9 +36,7 @@ app = FastAPI(lifespan=lifespan, title="Business Management System")
 app.add_middleware(SessionMiddleware, secret_key=SECRET)
 
 admin = Admin(
-    app=app,
-    engine=engine,
-    authentication_backend=admin_authentication_backend
+    app=app, engine=engine, authentication_backend=admin_authentication_backend
 )
 
 admin.add_view(UserAdminView)
