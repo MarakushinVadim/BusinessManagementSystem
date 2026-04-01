@@ -3,39 +3,46 @@ from contextlib import asynccontextmanager
 
 from redis import asyncio as aioredis
 from fastapi import FastAPI
-from fastapi_admin.app import app as admin_app
-from fastapi_admin.providers.login import UsernamePasswordProvider
+from sqladmin import Admin
+
+from app.auth.auth import admin_authentication_backend
 from app.auth.auth_routers import auth_router
 from loguru import logger
+from starlette.middleware.sessions import SessionMiddleware
 
-# from examples.models import Admin
+from app.database import engine
+from app.config import SECRET_KEY
+from app.models import UserAdminView
 
 logger.add("info.log")
+
+SECRET = SECRET_KEY
 
 
 @asynccontextmanager
 async def lifespan(_: FastAPI) -> AsyncGenerator[None]:
     pool = aioredis.ConnectionPool.from_url("redis://localhost", decode_responses=True)
-    redis_client = aioredis.Redis(connection_pool=pool)
+    app.state.redis = aioredis.Redis(connection_pool=pool)
 
-    await admin_app.configure(
-        logo_url="https://preview.tabler.io/static/logo-white.svg",
-        template_folders=["templates"],
-        providers=[
-            UsernamePasswordProvider(
-                login_logo_url="https://preview.tabler.io/static/logo.svg",
-                admin_model=Admin,
-            )
-        ],
-        redis=redis_client,
-    )
     yield
-    await redis_client.close()
+
+    await app.state.redis.close()
     await pool.disconnect()
 
 
 app = FastAPI(lifespan=lifespan, title="Business Management System")
-app.mount("/admin", admin_app)
+
+
+app.add_middleware(SessionMiddleware, secret_key=SECRET)
+
+admin = Admin(
+    app=app,
+    engine=engine,
+    authentication_backend=admin_authentication_backend
+)
+
+admin.add_view(UserAdminView)
+
 app.include_router(auth_router)
 
 

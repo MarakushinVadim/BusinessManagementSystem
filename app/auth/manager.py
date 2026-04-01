@@ -1,9 +1,10 @@
 import uuid
+from contextlib import asynccontextmanager
 
 from fastapi import Depends, Request
 from fastapi_users import BaseUserManager, UUIDIDMixin
 from app.models import UserModel as User
-from app.database import get_user_db
+from app.database import get_user_db, get_async_session
 from app.config import SECRET_KEY
 from loguru import logger
 
@@ -44,3 +45,10 @@ class UserManager(UUIDIDMixin, BaseUserManager[User, uuid.UUID]):
 
 async def get_user_manager(user_db=Depends(get_user_db)):
     yield UserManager(user_db)
+
+
+@asynccontextmanager
+async def get_user_manager_context():
+    async for session in get_async_session():
+        async for user_db in get_user_db(session):
+            yield UserManager(user_db)
