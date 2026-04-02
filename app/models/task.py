@@ -1,3 +1,5 @@
+import enum
+
 from app.config import Base
 
 from uuid import UUID
@@ -13,10 +15,10 @@ from typing import Literal, get_args
 from sqlalchemy import Enum
 
 from sqlalchemy.orm import Mapped, mapped_column
-from sqlalchemy import ForeignKey, String, DateTime, Integer
+from sqlalchemy import ForeignKey, String, DateTime
 
 
-class TaskStatus(str, Enum):
+class TaskStatus(str, enum.Enum):
     open = "open"
     in_work = "in_work"
     done = "done"
@@ -33,13 +35,14 @@ class TaskModel(Base):
     description: Mapped[str] = mapped_column(String, nullable=True)
     deadline: Mapped[datetime] = mapped_column(DateTime, nullable=False)
     status: Mapped[StatusType] = mapped_column(
-        Enum(*get_args(StatusType), name="status_enum", metadata=Base.metadata),
-        default="open",
+        Enum(*get_args(StatusType), name="status_enum", native_enum=False),
+        default=TaskStatus.open,
+        nullable=False,
     )
 
     performer_id: Mapped[UUID] = mapped_column(
         GUID(), ForeignKey("users.id"), nullable=True
     )
     author_id: Mapped[UUID] = mapped_column(
-        GUID(), ForeignKey("users.id"), nullable=False
+        GUID(), ForeignKey("users.id"), nullable=True
     )
