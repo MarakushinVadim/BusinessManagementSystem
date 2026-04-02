@@ -1,9 +1,12 @@
 from fastapi import APIRouter, Depends, status
 from app import schemas
 from app.auth.auth import fastapi_user_model
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.database import get_async_session
 from app.models import UserModel, TaskModel
+
+from loguru import logger
 
 router = APIRouter(
     prefix="/tasks",
@@ -27,7 +30,24 @@ async def create_task(
 
     task_db = TaskModel(**task_data, author_id=user.id)
     session.add(task_db)
-    await session.commit()
-    await session.refresh(task_db)
+    try:
+        await session.commit()
+        await session.refresh(task_db)
+    except Exception as e:
+        logger.error(e)
+        await session.rollback()
+        raise e
 
     return task_db
+
+
+@router.get("/", response_model=list[schemas.TaskRead], status_code=status.HTTP_200_OK)
+async def get_all_tasks(session: AsyncSession = Depends(get_async_session)):
+
+    tasks = (
+        await session.scalars(select(TaskModel).order_by(TaskModel.deadline.desc()))
+    ).all()
+
+    if tasks:
+        return tasks
+    return []
