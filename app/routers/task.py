@@ -1,7 +1,7 @@
-from fastapi import APIRouter, Depends, status
+from fastapi import APIRouter, Depends, status, HTTPException, Query
 from app import schemas
 from app.auth.auth import fastapi_user_model
-from sqlalchemy import select
+from sqlalchemy import select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.database import get_async_session
 from app.models import UserModel, TaskModel
@@ -51,3 +51,56 @@ async def get_all_tasks(session: AsyncSession = Depends(get_async_session)):
     if tasks:
         return tasks
     return []
+
+
+@router.patch(
+    "/{task_id}", response_model=schemas.TaskRead, status_code=status.HTTP_200_OK
+)
+async def assign_task_performer(
+    task_id: int,
+    performer_email: str = Query(description="Введите email исполнителя"),
+    session: AsyncSession = Depends(get_async_session),
+    current_user: UserModel = Depends(current_active_user),
+):
+
+    task = (
+        await session.scalars(select(TaskModel).where(TaskModel.id == task_id))
+    ).first()
+
+    if not task:
+        message = "Задача с таким id не найдена"
+        logger.error(message)
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=message)
+
+    if not task.author_id == current_user.id:
+        message = "Вносить изменения в задачу может только её автор!"
+        logger.error(message)
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=message)
+
+    performer = (
+        await session.scalars(
+            select(UserModel).where(UserModel.email == performer_email)
+        )
+    ).first()
+
+    if not performer:
+        message = "Пользователь с таким e-mail не найден!"
+        logger.error(message)
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=message)
+
+    updated_task = (
+        await session.execute(
+            update(TaskModel)
+            .where(TaskModel.id == task_id)
+            .values(performer_id=performer.id, status="in_work")
+            .returning(TaskModel)
+        )
+    ).scalar_one()
+    try:
+        await session.commit()
+        await session.refresh(updated_task)
+        return updated_task
+    except Exception as e:
+        logger.error(e)
+        await session.rollback()
+        raise e

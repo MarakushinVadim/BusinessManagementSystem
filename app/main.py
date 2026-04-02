@@ -16,6 +16,7 @@ from app.config import SECRET_KEY
 from app.models import UserAdminView, TaskAdminView
 
 logger.add("info.log")
+logger.add("error.log")
 
 SECRET = SECRET_KEY
 
