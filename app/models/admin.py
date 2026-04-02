@@ -1,18 +1,46 @@
-from app.models.user import UserModel as User
+from typing import Any
+
+from starlette.requests import Request
+
+from app.models import TaskModel, UserModel
 from sqladmin import ModelView
 
 
-class UserAdminView(ModelView, model=User):
-    column_list = [User.id, User.email, User.role, User.is_active]
-    column_searchable_list = [User.email, User.role]
+class UserAdminView(ModelView, model=UserModel):
+    column_list = [
+        UserModel.id,
+        UserModel.email,
+        UserModel.role,
+        UserModel.is_active,
+        UserModel.is_verified,
+    ]
+    column_searchable_list = [UserModel.email, UserModel.role]
     name = "Пользователь"
     name_plural = "Пользователи"
     icon = "fa-solid fa-user"
 
-    form_excluded_columns = [User.hashed_password]
+    form_excluded_columns = [UserModel.hashed_password]
 
     form_args = {
         "role": {
             "label": "Роль пользователя",
         }
     }
+
+
+class TaskAdminView(ModelView, model=TaskModel):
+    column_list = ["title", "author_id", "performer_id", "deadline", "status"]
+
+    name = "Задача"
+    name_plural = "Задачи"
+    icon = "fa-solid fa-list-check"
+
+    form_excluded_columns = ["author_id"]
+
+    async def on_model_change(
+        self, data: dict, model: Any, is_created: bool, request: Request
+    ) -> None:
+        if is_created:
+            user_id = request.session.get("user_id")
+            if user_id:
+                data["author_id"] = user_id

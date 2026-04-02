@@ -1,5 +1,5 @@
 from .task import TaskModel
 from .user import UserModel
-from .admin import UserAdminView
+from .admin import UserAdminView, TaskAdminView
 
-__all__ = ["TaskModel", "UserModel", "UserAdminView"]
+__all__ = ["TaskModel", "UserModel", "UserAdminView", "TaskAdminView"]

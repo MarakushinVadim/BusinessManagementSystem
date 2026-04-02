@@ -10,9 +10,10 @@ from app.auth.auth_routers import auth_router
 from loguru import logger
 from starlette.middleware.sessions import SessionMiddleware
 
+from app import routers
 from app.database import engine
 from app.config import SECRET_KEY
-from app.models import UserAdminView
+from app.models import UserAdminView, TaskAdminView
 
 logger.add("info.log")
 
@@ -40,8 +41,10 @@ admin = Admin(
 )
 
 admin.add_view(UserAdminView)
+admin.add_view(TaskAdminView)
 
 app.include_router(auth_router)
+app.include_router(routers.task_router)
 
 
 @app.get("/")

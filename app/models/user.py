@@ -25,3 +25,6 @@ class UserModel(SQLAlchemyBaseUserTableUUID, Base):
         Enum(*get_args(RoleType), name="role_enum", metadata=Base.metadata),
         default="user",
     )
+
+    def __str__(self) -> str:
+        return f"{self.email}"

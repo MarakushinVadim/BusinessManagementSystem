@@ -1,3 +1,6 @@
+import uuid
+
+from fastapi_users import FastAPIUsers
 from fastapi_users.authentication import (
     AuthenticationBackend,
     BearerTransport,
@@ -5,10 +8,10 @@ from fastapi_users.authentication import (
 )
 from sqladmin.authentication import AuthenticationBackend as AdminAuthBack
 from starlette.requests import Request
-from starlette.responses import Response
 
 from app.config import SECRET_KEY
-from app.auth.manager import get_user_manager_context
+from app.auth.manager import get_user_manager_context, get_user_manager
+from app.models import UserModel
 
 SECRET = SECRET_KEY
 
@@ -46,6 +49,8 @@ class AdminAuth(AdminAuthBack):
                 token = await strategy.write_token(user)
 
                 request.session.update({"token": token})
+                request.session.update({"user_id": user.id})
+
                 return True
         return False
 
@@ -69,3 +74,7 @@ class AdminAuth(AdminAuthBack):
 
 
 admin_authentication_backend = AdminAuth(secret_key=SECRET_KEY)
+
+fastapi_user_model = FastAPIUsers[UserModel, uuid.UUID](
+    get_user_manager, [auth_backend]
+)
