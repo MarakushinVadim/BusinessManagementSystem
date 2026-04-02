@@ -58,7 +58,7 @@ async def get_all_tasks(session: AsyncSession = Depends(get_async_session)):
 )
 async def assign_task_performer(
     task_id: int,
-    performer_email: str = Query(description="Введите email исполнителя"),
+    performer_id: str = Query(description="Введите id исполнителя"),
     session: AsyncSession = Depends(get_async_session),
     current_user: UserModel = Depends(current_active_user),
 ):
@@ -79,7 +79,7 @@ async def assign_task_performer(
 
     performer = (
         await session.scalars(
-            select(UserModel).where(UserModel.email == performer_email)
+            select(UserModel).where(UserModel.id == performer_id)
         )
     ).first()
 
@@ -93,6 +93,61 @@ async def assign_task_performer(
             update(TaskModel)
             .where(TaskModel.id == task_id)
             .values(performer_id=performer.id, status="in_work")
+            .returning(TaskModel)
+        )
+    ).scalar_one()
+    try:
+        await session.commit()
+        await session.refresh(updated_task)
+        return updated_task
+    except Exception as e:
+        logger.error(e)
+        await session.rollback()
+        raise e
+
+
+@router.patch(
+    "/update/{task_id}", response_model=schemas.TaskRead, status_code=status.HTTP_200_OK
+)
+async def update_task(
+    task_id: int,
+    task: schemas.TaskUpdate,
+    session: AsyncSession = Depends(get_async_session),
+    current_user: UserModel = Depends(current_active_user),
+):
+
+    current_task = (
+        await session.scalars(select(TaskModel).where(TaskModel.id == task_id))
+    ).first()
+
+    if not current_task:
+        message = "Задача с таким id не найдена"
+        logger.error(message)
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=message)
+
+    if not current_task.author_id == current_user.id:
+        message = "Вносить изменения в задачу может только её автор!"
+        logger.error(message)
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=message)
+
+    values = {}
+
+    if task.title:
+        values["title"] = task.title
+    if task.description:
+        values["description"] = task.description
+    if task.deadline:
+        values["deadline"] = task.deadline.replace(tzinfo=None)
+    if task.status:
+        values["status"] = task.status
+    if task.performer_id:
+        values["performer_id"] = task.performer_id
+
+    updated_task = (
+        await session.execute(
+            update(TaskModel)
+            .where(TaskModel.id == task_id)
+            .values(**values)
             .returning(TaskModel)
         )
     ).scalar_one()

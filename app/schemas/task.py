@@ -1,7 +1,7 @@
 from datetime import datetime
 import uuid
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, EmailStr
 
 from typing import Optional
 
@@ -19,5 +19,13 @@ class TaskRead(TaskCreate):
     performer_id: Optional[uuid.UUID] = Field(description="ID исполнителя")
 
 
-class TaskUpdate(TaskCreate):
-    performer_id: uuid.UUID = Field(description="ID исполнителя")
+class TaskUpdate(BaseModel):
+    title: Optional[str] = Field(default=None, description="Название задачи")
+    description: Optional[str] = Field(default=None, description="Описание задачи")
+    deadline: Optional[datetime] = Field(
+        default=None, description="Выполнить до: в формате '2026-04-03T00:00:00'"
+    )
+    status: Optional[str] = Field(default=None, description="Статус задачи")
+    performer_id: Optional[uuid.UUID] = Field(
+        default=None, description="ID исполнителя"
+    )
