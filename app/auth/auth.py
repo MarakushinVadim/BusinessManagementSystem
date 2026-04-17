@@ -49,7 +49,7 @@ class AdminAuth(AdminAuthBack):
                 token = await strategy.write_token(user)
 
                 request.session.update({"token": token})
-                request.session.update({"user_id": user.id})
+                request.session.update({"user_id": str(user.id)})
 
                 return True
         return False
