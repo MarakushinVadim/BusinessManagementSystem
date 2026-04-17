@@ -18,5 +18,5 @@ class TeamModel(Base):
     )
 
     users: Mapped[list["UserModel"]] = relationship(
-        "UserModel", back_populates="team", cascade="save-update, merge"
+        "UserModel", back_populates="team", cascade="save-update, merge", foreign_keys="[UserModel.team_id]"
     )
