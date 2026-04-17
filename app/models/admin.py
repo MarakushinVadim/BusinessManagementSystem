@@ -2,7 +2,7 @@ from typing import Any
 
 from starlette.requests import Request
 
-from app.models import TaskModel, UserModel
+from app.models import TaskModel, UserModel, TeamModel
 from sqladmin import ModelView
 
 
@@ -44,3 +44,11 @@ class TaskAdminView(ModelView, model=TaskModel):
             user_id = request.session.get("user_id")
             if user_id:
                 data["author_id"] = user_id
+
+
+class TeamAdminView(ModelView, model=TeamModel):
+    column_list = ["id", "admin_id", "users"]
+
+    name = "Команда"
+    name_plural = "Команды"
+    icon = "ti ti-users-group"

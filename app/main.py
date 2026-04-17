@@ -13,7 +13,7 @@ from starlette.middleware.sessions import SessionMiddleware
 from app import routers
 from app.database import engine
 from app.config import SECRET_KEY
-from app.models import UserAdminView, TaskAdminView
+from app.models import UserAdminView, TaskAdminView, TeamAdminView
 
 logger.add("info.log")
 logger.add("error.log")
@@ -43,6 +43,7 @@ admin = Admin(
 
 admin.add_view(UserAdminView)
 admin.add_view(TaskAdminView)
+admin.add_view(TeamAdminView)
 
 app.include_router(auth_router)
 app.include_router(routers.task_router)
