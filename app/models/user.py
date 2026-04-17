@@ -43,7 +43,9 @@ class UserModel(SQLAlchemyBaseUserTableUUID, Base):
 
     team_id: Mapped[int] = mapped_column(ForeignKey("teams.id"), nullable=True)
 
-    team: Mapped["TeamModel"] = relationship("TeamModel", back_populates="users")
+    team: Mapped["TeamModel"] = relationship(
+        "TeamModel", back_populates="users", foreign_keys=[team_id]
+    )
 
     def __str__(self) -> str:
         return f"{self.email}"
