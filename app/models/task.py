@@ -6,16 +6,12 @@ from uuid import UUID
 
 from fastapi_users_db_sqlalchemy.generics import GUID
 
-from app.models.user import UserModel
-
 from datetime import datetime
 
 from typing import Literal, get_args
 
-from sqlalchemy import Enum
-
 from sqlalchemy.orm import Mapped, mapped_column
-from sqlalchemy import ForeignKey, String, DateTime
+from sqlalchemy import ForeignKey, String, DateTime, Enum
 
 
 class TaskStatus(str, enum.Enum):

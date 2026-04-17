@@ -78,9 +78,7 @@ async def assign_task_performer(
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=message)
 
     performer = (
-        await session.scalars(
-            select(UserModel).where(UserModel.id == performer_id)
-        )
+        await session.scalars(select(UserModel).where(UserModel.id == performer_id))
     ).first()
 
     if not performer:

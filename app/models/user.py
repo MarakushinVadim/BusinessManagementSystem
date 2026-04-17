@@ -2,7 +2,8 @@ from app.config import Base
 
 from fastapi_users_db_sqlalchemy import SQLAlchemyBaseUserTableUUID
 
-from sqlalchemy import Enum
+from sqlalchemy import Enum, ForeignKey
+from sqlalchemy.orm import relationship
 
 from typing import Literal, get_args
 
@@ -25,6 +26,9 @@ class UserModel(SQLAlchemyBaseUserTableUUID, Base):
         Enum(*get_args(RoleType), name="role_enum", metadata=Base.metadata),
         default="user",
     )
+    team_id: Mapped[int] = mapped_column(ForeignKey("teams.id"), nullable=True)
+
+    team: Mapped["TeamModel"] = relationship("TeamModel", back_populates="users")
 
     def __str__(self) -> str:
         return f"{self.email}"
