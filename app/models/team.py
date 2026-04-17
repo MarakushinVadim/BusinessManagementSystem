@@ -14,9 +14,9 @@ class TeamModel(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
 
     admin_id: Mapped[UUID] = mapped_column(
-        GUID(), ForeignKey("users.id"), nullable=True
+        GUID(), ForeignKey("users.id", use_alter=True, name="fk_team_admin_id"), nullable=True
     )
 
     users: Mapped[list["UserModel"]] = relationship(
-        "User", back_populates="team", cascade="save-update, merge"
+        "UserModel", back_populates="team", cascade="save-update, merge"
     )
