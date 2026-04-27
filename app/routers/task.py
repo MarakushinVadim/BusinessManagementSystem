@@ -2,6 +2,7 @@ from fastapi import APIRouter, Depends, status, HTTPException, Query
 from app import schemas
 from app.auth.auth import fastapi_user_model
 from sqlalchemy import select, update
+from sqlalchemy.orm import selectinload
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.database import get_async_session
 from app.models import UserModel, TaskModel
@@ -45,7 +46,9 @@ async def create_task(
 async def get_all_tasks(session: AsyncSession = Depends(get_async_session)):
 
     tasks = (
-        await session.scalars(select(TaskModel).order_by(TaskModel.deadline.desc()))
+        await session.scalars(select(TaskModel).order_by(TaskModel.deadline.desc()).options(
+            selectinload(TaskModel.comments)
+        ))
     ).all()
 
     if tasks:

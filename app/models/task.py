@@ -10,7 +10,7 @@ from datetime import datetime
 
 from typing import Literal, get_args
 
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy import ForeignKey, String, DateTime, Enum
 
 
@@ -34,6 +34,13 @@ class TaskModel(Base):
         Enum(*get_args(StatusType), name="status_enum", native_enum=False),
         default=TaskStatus.open,
         nullable=False,
+    )
+    comments: Mapped["CommentModel"] = relationship(
+        "CommentModel",
+        back_populates="task",
+        uselist=False,
+        lazy="selectin",
+        cascade="all, delete-orphan"
     )
 
     performer_id: Mapped[UUID] = mapped_column(

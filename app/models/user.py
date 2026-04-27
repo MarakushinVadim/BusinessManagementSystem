@@ -47,5 +47,10 @@ class UserModel(SQLAlchemyBaseUserTableUUID, Base):
         "TeamModel", back_populates="users", foreign_keys=[team_id]
     )
 
+    comments: Mapped["CommentModel"] = relationship(
+        "CommentModel",
+        back_populates="users"
+    )
+
     def __str__(self) -> str:
         return f"{self.email}"

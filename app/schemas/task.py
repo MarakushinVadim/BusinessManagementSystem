@@ -3,8 +3,11 @@ import uuid
 
 from pydantic import BaseModel, Field, EmailStr
 
-from typing import Optional
+from typing import Optional, TYPE_CHECKING
 
+
+if TYPE_CHECKING:
+    from app.schemas.comment import CommentOut
 
 class TaskCreate(BaseModel):
     title: str = Field(description="Название задачи")
@@ -17,6 +20,8 @@ class TaskRead(TaskCreate):
     id: int = Field(description="ID задачи")
     author_id: uuid.UUID = Field(description="ID автора")
     performer_id: Optional[uuid.UUID] = Field(description="ID исполнителя")
+    comments: Optional[list["CommentOut"]] = []
+    class Config: from_attributes = True
 
 
 class TaskUpdate(BaseModel):
@@ -29,3 +34,7 @@ class TaskUpdate(BaseModel):
     performer_id: Optional[uuid.UUID] = Field(
         default=None, description="ID исполнителя"
     )
+
+
+from app.schemas.comment import CommentOut
+TaskRead.model_rebuild()
