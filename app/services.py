@@ -1,3 +1,5 @@
+from fastapi import HTTPException, status
+
 import smtplib
 import socket
 from email.mime.multipart import MIMEMultipart
@@ -6,6 +8,7 @@ from email.mime.text import MIMEText
 from loguru import logger
 
 from app.config import smtp_server, smtp_port, email_address, email_password
+from app.models import TaskModel
 
 
 class SendMail:
@@ -74,3 +77,10 @@ class SendMail:
 
 
 email_sender = SendMail(smtp_server, smtp_port, email_address, email_password)
+
+
+def check_current_task_exist(task: TaskModel):
+    if not task:
+        message = "Задача с таким id не найдена"
+        logger.error(message)
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=message)

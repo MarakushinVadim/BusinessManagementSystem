@@ -38,9 +38,8 @@ class TaskModel(Base):
     comments: Mapped["CommentModel"] = relationship(
         "CommentModel",
         back_populates="task",
-        uselist=False,
         lazy="selectin",
-        cascade="all, delete-orphan"
+        cascade="all, delete-orphan",
     )
 
     performer_id: Mapped[UUID] = mapped_column(

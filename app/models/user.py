@@ -48,8 +48,7 @@ class UserModel(SQLAlchemyBaseUserTableUUID, Base):
     )
 
     comments: Mapped["CommentModel"] = relationship(
-        "CommentModel",
-        back_populates="users"
+        "CommentModel", back_populates="users"
     )
 
     def __str__(self) -> str:

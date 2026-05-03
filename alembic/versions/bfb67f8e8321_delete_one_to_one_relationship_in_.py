@@ -1,8 +1,8 @@
-"""add forign_key to relationship team in UserModel
+"""delete one to one relationship in TaskModel.comments
 
-Revision ID: d2cb904ae316
-Revises: ba454d338270
-Create Date: 2026-04-17 14:43:35.842799
+Revision ID: bfb67f8e8321
+Revises: fde3569d7525
+Create Date: 2026-05-03 14:21:55.173250
 
 """
 
@@ -12,8 +12,8 @@ from alembic import op
 import sqlalchemy as sa
 
 # revision identifiers, used by Alembic.
-revision: str = "d2cb904ae316"
-down_revision: Union[str, Sequence[str], None] = "ba454d338270"
+revision: str = "bfb67f8e8321"
+down_revision: Union[str, Sequence[str], None] = "fde3569d7525"
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
 

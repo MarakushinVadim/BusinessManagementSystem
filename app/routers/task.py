@@ -46,9 +46,11 @@ async def create_task(
 async def get_all_tasks(session: AsyncSession = Depends(get_async_session)):
 
     tasks = (
-        await session.scalars(select(TaskModel).order_by(TaskModel.deadline.desc()).options(
-            selectinload(TaskModel.comments)
-        ))
+        await session.scalars(
+            select(TaskModel)
+            .order_by(TaskModel.deadline.desc())
+            .options(selectinload(TaskModel.comments))
+        )
     ).all()
 
     if tasks:
@@ -126,7 +128,7 @@ async def update_task(
         logger.error(message)
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=message)
 
-    if not current_task.author_id == current_user.id:
+    if not current_task.author_id != current_user.id:
         message = "Вносить изменения в задачу может только её автор!"
         logger.error(message)
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=message)
@@ -160,3 +162,22 @@ async def update_task(
         logger.error(e)
         await session.rollback()
         raise e
+
+
+@router.get(
+    "{task_id}", response_model=schemas.TaskRead, status_code=status.HTTP_200_OK
+)
+async def detail_task(
+    task_id: int,
+    session: AsyncSession = Depends(get_async_session),
+):
+    current_task = (
+        await session.scalars(select(TaskModel).where(TaskModel.id == task_id))
+    ).first()
+
+    if not current_task:
+        message = "Задача с таким id не найдена"
+        logger.error(message)
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=message)
+
+    return current_task

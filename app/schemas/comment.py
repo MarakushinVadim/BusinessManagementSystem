@@ -11,12 +11,21 @@ if TYPE_CHECKING:
 class CommentCreate(BaseModel):
     text: str
 
+
 class CommentOut(BaseModel):
     id: int
     text: str
-    author: "UserShort"
+    username: str
     created_at: datetime
-    class Config: from_attributes = True
+
+    class Config:
+        from_attributes = True
+
+
+class CommentList(BaseModel):
+    comments: list[CommentOut]
+
 
 from app.schemas.user import UserShort
+
 CommentOut.model_rebuild()

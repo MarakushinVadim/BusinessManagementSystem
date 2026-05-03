@@ -1,6 +1,6 @@
 from .user import UserCreate, UserUpdate, UserRead, UserShort
 from .task import TaskCreate, TaskUpdate, TaskRead
-from .comment import CommentCreate, CommentOut
+from .comment import CommentCreate, CommentOut, CommentList
 
 __all__ = [
     "UserUpdate",
@@ -11,5 +11,6 @@ __all__ = [
     "TaskRead",
     "CommentCreate",
     "CommentOut",
-    "UserShort"
+    "UserShort",
+    "CommentList",
 ]
