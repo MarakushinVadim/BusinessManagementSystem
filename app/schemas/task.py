@@ -37,6 +37,9 @@ class TaskUpdate(BaseModel):
         default=None, description="ID исполнителя"
     )
 
+class RatingCreate(BaseModel):
+    rating: int = Field(ge=1, le=5)
+
 
 from app.schemas.comment import CommentOut
 

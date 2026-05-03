@@ -8,7 +8,7 @@ from email.mime.text import MIMEText
 from loguru import logger
 
 from app.config import smtp_server, smtp_port, email_address, email_password
-from app.models import TaskModel
+from app.models import TaskModel, UserModel
 
 
 class SendMail:
@@ -84,3 +84,10 @@ def check_current_task_exist(task: TaskModel):
         message = "Задача с таким id не найдена"
         logger.error(message)
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=message)
+
+
+async def check_author(task: TaskModel, user: UserModel):
+    if task.author_id != user.id:
+        message = "Оценивать задачу может только ее автор!"
+        logger.error(message)
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=message)

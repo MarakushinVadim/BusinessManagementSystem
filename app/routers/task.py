@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Depends, status, HTTPException, Query
+
 from app import schemas
 from app.auth.auth import fastapi_user_model
 from sqlalchemy import select, update
@@ -6,6 +7,7 @@ from sqlalchemy.orm import selectinload
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.database import get_async_session
 from app.models import UserModel, TaskModel
+from app.services import check_current_task_exist, check_author
 
 from loguru import logger
 
@@ -181,3 +183,21 @@ async def detail_task(
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=message)
 
     return current_task
+
+@router.post('/{task_id}/rate/{rate}')
+async def create_rating(
+        task_id: int,
+        rate: schemas.RatingCreate,
+        session: AsyncSession = Depends(get_async_session),
+        current_user: UserModel = Depends(current_active_user)
+):
+
+    current_task = (await session.scalars(select(TaskModel).where(TaskModel.id == task_id))).first()
+
+    check_current_task_exist(current_task)
+
+    await check_author(current_task, current_user)
+
+
+
+

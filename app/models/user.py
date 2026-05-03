@@ -51,5 +51,9 @@ class UserModel(SQLAlchemyBaseUserTableUUID, Base):
         "CommentModel", back_populates="users"
     )
 
+    ratings: Mapped["RatingModel"] = relationship(
+        "RatingModel", back_populates="user"
+    )
+
     def __str__(self) -> str:
         return f"{self.email}"

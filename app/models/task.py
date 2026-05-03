@@ -42,9 +42,37 @@ class TaskModel(Base):
         cascade="all, delete-orphan",
     )
 
+    rating: Mapped["RatingModel"] = relationship(
+        "RatingModel",
+        back_populates="task",
+        lazy="selectin",
+        cascade="all, delete-orphan",
+        uselist=False
+    )
+
     performer_id: Mapped[UUID] = mapped_column(
         GUID(), ForeignKey("users.id"), nullable=True
     )
     author_id: Mapped[UUID] = mapped_column(
         GUID(), ForeignKey("users.id"), nullable=True
     )
+
+class RatingModel(Base):
+    __tablename__ = "ratings"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    rate: Mapped[int] = mapped_column(nullable=True)
+
+    task_id: Mapped[int] = mapped_column(ForeignKey("tasks.id"), nullable=False, unique=True)
+    performer_id: Mapped[UUID] = mapped_column(GUID(), ForeignKey("users.id"))
+
+    task: Mapped[TaskModel] = relationship(
+        "TaskModel",
+        back_populates="rating",
+        uselist=False
+    )
+    user: Mapped[UUID] = relationship(
+        "UserModel",
+        back_populates="rating",
+    )
+

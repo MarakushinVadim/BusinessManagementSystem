@@ -1,5 +1,5 @@
 from .user import UserCreate, UserUpdate, UserRead, UserShort
-from .task import TaskCreate, TaskUpdate, TaskRead
+from .task import TaskCreate, TaskUpdate, TaskRead, RatingCreate
 from .comment import CommentCreate, CommentOut, CommentList
 
 __all__ = [
@@ -9,6 +9,7 @@ __all__ = [
     "TaskCreate",
     "TaskUpdate",
     "TaskRead",
+    "RatingCreate",
     "CommentCreate",
     "CommentOut",
     "UserShort",
