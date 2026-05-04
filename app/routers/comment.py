@@ -24,7 +24,7 @@ async def get_comments(
         await session.scalars(select(TaskModel).where(TaskModel.id == task_id))
     ).first()
 
-    check_current_task_exist(current_task)
+    await check_current_task_exist(current_task)
 
     comments = (
         await session.scalars(
@@ -52,7 +52,7 @@ async def create_comment(
         await session.scalars(select(TaskModel).where(TaskModel.id == task_id))
     ).first()
 
-    check_current_task_exist(current_task)
+    await check_current_task_exist(current_task)
 
     comment_data = comment.model_dump()
 

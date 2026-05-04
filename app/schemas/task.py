@@ -21,6 +21,7 @@ class TaskRead(TaskCreate):
     author_id: uuid.UUID = Field(description="ID автора")
     performer_id: Optional[uuid.UUID] = Field(description="ID исполнителя")
     comments: Optional[list["CommentOut"]] = []
+    rating: Optional["RatingCreate"] = []
 
     class Config:
         from_attributes = True
@@ -38,7 +39,7 @@ class TaskUpdate(BaseModel):
     )
 
 class RatingCreate(BaseModel):
-    rating: int = Field(ge=1, le=5)
+    rate: int = Field(ge=1, le=5)
 
 
 from app.schemas.comment import CommentOut, CommentList

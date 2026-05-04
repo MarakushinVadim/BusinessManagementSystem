@@ -54,14 +54,6 @@ async def get_all_tasks(session: AsyncSession = Depends(get_async_session)):
             .options(selectinload(TaskModel.comments))
         )
     ).all()
-    for task in tasks:
-        # task_dict = None
-        # if task.comments:
-        #     task_dict = schemas.CommentOut.model_validate(task.comments).model_dump()
-        # for comment in task.comments:
-        #     print(comment)
-        print(task.comments)
-
 
     if tasks:
         return tasks
@@ -88,7 +80,6 @@ async def assign_task_performer(
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=message)
 
     if not task.author_id == current_user.id:
-        # print("task author = " task)
         message = "Вносить изменения в задачу может только её автор!"
         logger.error(message)
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=message)
@@ -193,6 +184,36 @@ async def detail_task(
 
     return current_task
 
+@router.patch('/task_done/{task_id}')
+async def done_task(
+        task_id: int,
+        session: AsyncSession = Depends(get_async_session),
+        current_user: UserModel = Depends(current_active_user)
+):
+    current_task = (await session.scalars(select(TaskModel).where(TaskModel.id == task_id))).first()
+
+    await check_current_task_exist(current_task)
+
+    await check_author(current_task, current_user)
+
+    updated_task = (
+        await session.execute(
+            update(TaskModel)
+            .where(TaskModel.id == task_id)
+            .values(status="done")
+            .returning(TaskModel)
+        )
+    ).scalar_one()
+    try:
+        await session.commit()
+        await session.refresh(updated_task)
+        return updated_task
+    except Exception as e:
+        logger.error(e)
+        await session.rollback()
+        raise e
+
+
 @router.post('/{task_id}/rate/')
 async def create_rating(
         task_id: int,
@@ -203,7 +224,7 @@ async def create_rating(
 
     current_task = (await session.scalars(select(TaskModel).where(TaskModel.id == task_id))).first()
 
-    check_current_task_exist(current_task)
+    await check_current_task_exist(current_task)
 
     await check_author(current_task, current_user)
 
