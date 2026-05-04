@@ -29,3 +29,4 @@ class CommentList(BaseModel):
 from app.schemas.user import UserShort
 
 CommentOut.model_rebuild()
+CommentList.model_rebuild()

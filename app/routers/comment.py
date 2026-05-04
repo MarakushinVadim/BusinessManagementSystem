@@ -33,6 +33,8 @@ async def get_comments(
             .order_by(desc(CommentModel.created_at))
         )
     ).all()
+    if not comments:
+        comments = []
 
     return {"comments": comments}
 

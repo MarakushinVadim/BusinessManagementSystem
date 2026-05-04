@@ -35,11 +35,13 @@ class TaskModel(Base):
         default=TaskStatus.open,
         nullable=False,
     )
-    comments: Mapped["CommentModel"] = relationship(
+    comments: Mapped[list["CommentModel"]] = relationship(
         "CommentModel",
         back_populates="task",
         lazy="selectin",
         cascade="all, delete-orphan",
+        uselist=True,
+        order_by="desc(CommentModel.created_at)"
     )
 
     rating: Mapped["RatingModel"] = relationship(
@@ -73,6 +75,6 @@ class RatingModel(Base):
     )
     user: Mapped[UUID] = relationship(
         "UserModel",
-        back_populates="rating",
+        back_populates="ratings",
     )
 

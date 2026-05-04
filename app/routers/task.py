@@ -6,8 +6,8 @@ from sqlalchemy import select, update
 from sqlalchemy.orm import selectinload
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.database import get_async_session
-from app.models import UserModel, TaskModel
-from app.services import check_current_task_exist, check_author
+from app.models import UserModel, TaskModel, RatingModel, CommentModel
+from app.services import check_current_task_exist, check_author, check_task_done
 
 from loguru import logger
 
@@ -54,6 +54,14 @@ async def get_all_tasks(session: AsyncSession = Depends(get_async_session)):
             .options(selectinload(TaskModel.comments))
         )
     ).all()
+    for task in tasks:
+        # task_dict = None
+        # if task.comments:
+        #     task_dict = schemas.CommentOut.model_validate(task.comments).model_dump()
+        # for comment in task.comments:
+        #     print(comment)
+        print(task.comments)
+
 
     if tasks:
         return tasks
@@ -80,6 +88,7 @@ async def assign_task_performer(
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=message)
 
     if not task.author_id == current_user.id:
+        # print("task author = " task)
         message = "Вносить изменения в задачу может только её автор!"
         logger.error(message)
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=message)
@@ -167,7 +176,7 @@ async def update_task(
 
 
 @router.get(
-    "{task_id}", response_model=schemas.TaskRead, status_code=status.HTTP_200_OK
+    "/{task_id}", response_model=schemas.TaskRead, status_code=status.HTTP_200_OK
 )
 async def detail_task(
     task_id: int,
@@ -184,7 +193,7 @@ async def detail_task(
 
     return current_task
 
-@router.post('/{task_id}/rate/{rate}')
+@router.post('/{task_id}/rate/')
 async def create_rating(
         task_id: int,
         rate: schemas.RatingCreate,
@@ -198,6 +207,20 @@ async def create_rating(
 
     await check_author(current_task, current_user)
 
+    await check_task_done(current_task)
 
+    rate_data = rate.model_dump()
 
+    if not rate_data:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST)
 
+    rate_db = RatingModel(
+        **rate_data,
+        task_id=task_id,
+        performer_id=current_user.id
+    )
+
+    session.add(rate_db)
+
+    await session.commit()
+    await session.refresh(current_task)

@@ -6,7 +6,7 @@ from pydantic import BaseModel, Field, EmailStr
 from typing import Optional, TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from app.schemas.comment import CommentOut
+    from app.schemas.comment import CommentOut, CommentList
 
 
 class TaskCreate(BaseModel):
@@ -41,6 +41,6 @@ class RatingCreate(BaseModel):
     rating: int = Field(ge=1, le=5)
 
 
-from app.schemas.comment import CommentOut
+from app.schemas.comment import CommentOut, CommentList
 
 TaskRead.model_rebuild()

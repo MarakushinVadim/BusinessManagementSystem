@@ -91,3 +91,9 @@ async def check_author(task: TaskModel, user: UserModel):
         message = "Оценивать задачу может только ее автор!"
         logger.error(message)
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=message)
+
+async def check_task_done(task: TaskModel):
+    if task.status != "done":
+        message = "Оценивать можно только завершенные задачи!"
+        logger.error(message)
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=message)
