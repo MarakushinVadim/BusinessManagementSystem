@@ -3,6 +3,7 @@ from .user import UserModel
 from .team import TeamModel
 from .comment import CommentModel
 from .admin import UserAdminView, TaskAdminView, TeamAdminView
+from .meeting import MeetingModel
 
 __all__ = [
     "TaskModel",
@@ -13,4 +14,5 @@ __all__ = [
     "TaskAdminView",
     "TeamAdminView",
     "CommentModel",
+    "MeetingModel"
 ]
