@@ -56,7 +56,7 @@ class UserModel(SQLAlchemyBaseUserTableUUID, Base):
     )
 
     meetings: Mapped[list["MeetingModel"]] = relationship(
-        "MeetingModel", back_populates="participants"
+        "MeetingModel", back_populates="participants", secondary="users_meetings"
     )
 
     def __str__(self) -> str:
