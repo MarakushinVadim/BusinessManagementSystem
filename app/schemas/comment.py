@@ -2,11 +2,6 @@ from datetime import datetime
 
 from pydantic import BaseModel
 
-from typing import TYPE_CHECKING
-
-if TYPE_CHECKING:
-    from app.schemas.user import UserShort
-
 
 class CommentCreate(BaseModel):
     text: str
@@ -25,8 +20,6 @@ class CommentOut(BaseModel):
 class CommentList(BaseModel):
     comments: list[CommentOut]
 
-
-from app.schemas.user import UserShort
 
 CommentOut.model_rebuild()
 CommentList.model_rebuild()

@@ -8,7 +8,9 @@ from email.mime.text import MIMEText
 from loguru import logger
 
 from app.config import smtp_server, smtp_port, email_address, email_password
-from app.models import TaskModel, UserModel
+from app.models import TaskModel, UserModel, MeetingModel
+
+from datetime import datetime, timedelta
 
 
 class SendMail:
@@ -94,8 +96,18 @@ async def check_author(task: TaskModel, user: UserModel):
         logger.error(message)
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=message)
 
+
 async def check_task_done(task: TaskModel):
     if task.status != "done":
         message = "Оценивать можно только завершенные задачи!"
+        logger.error(message)
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=message)
+
+
+async def check_free_datetime_for_meet(
+    date: datetime, user_meet_list: MeetingModel, user: UserModel
+):
+    if date >= user_meet_list.date and date <= user_meet_list.date + timedelta(hours=1):
+        message = f"У пользователя {user.email} есть встреча на это время"
         logger.error(message)
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=message)

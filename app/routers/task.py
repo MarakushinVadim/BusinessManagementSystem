@@ -184,13 +184,16 @@ async def detail_task(
 
     return current_task
 
-@router.patch('/task_done/{task_id}')
+
+@router.patch("/task_done/{task_id}")
 async def done_task(
-        task_id: int,
-        session: AsyncSession = Depends(get_async_session),
-        current_user: UserModel = Depends(current_active_user)
+    task_id: int,
+    session: AsyncSession = Depends(get_async_session),
+    current_user: UserModel = Depends(current_active_user),
 ):
-    current_task = (await session.scalars(select(TaskModel).where(TaskModel.id == task_id))).first()
+    current_task = (
+        await session.scalars(select(TaskModel).where(TaskModel.id == task_id))
+    ).first()
 
     await check_current_task_exist(current_task)
 
@@ -214,15 +217,17 @@ async def done_task(
         raise e
 
 
-@router.post('/{task_id}/rate/')
+@router.post("/{task_id}/rate/")
 async def create_rating(
-        task_id: int,
-        rate: schemas.RatingCreate,
-        session: AsyncSession = Depends(get_async_session),
-        current_user: UserModel = Depends(current_active_user)
+    task_id: int,
+    rate: schemas.RatingCreate,
+    session: AsyncSession = Depends(get_async_session),
+    current_user: UserModel = Depends(current_active_user),
 ):
 
-    current_task = (await session.scalars(select(TaskModel).where(TaskModel.id == task_id))).first()
+    current_task = (
+        await session.scalars(select(TaskModel).where(TaskModel.id == task_id))
+    ).first()
 
     await check_current_task_exist(current_task)
 
@@ -235,11 +240,7 @@ async def create_rating(
     if not rate_data:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST)
 
-    rate_db = RatingModel(
-        **rate_data,
-        task_id=task_id,
-        performer_id=current_user.id
-    )
+    rate_db = RatingModel(**rate_data, task_id=task_id, performer_id=current_user.id)
 
     session.add(rate_db)
 

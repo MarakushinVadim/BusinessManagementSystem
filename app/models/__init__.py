@@ -14,5 +14,5 @@ __all__ = [
     "TaskAdminView",
     "TeamAdminView",
     "CommentModel",
-    "MeetingModel"
+    "MeetingModel",
 ]

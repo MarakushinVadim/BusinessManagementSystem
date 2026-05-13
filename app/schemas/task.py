@@ -38,6 +38,7 @@ class TaskUpdate(BaseModel):
         default=None, description="ID исполнителя"
     )
 
+
 class RatingCreate(BaseModel):
     rate: int = Field(ge=1, le=5)
 
