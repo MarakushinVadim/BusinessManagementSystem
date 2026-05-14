@@ -6,6 +6,7 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
 from loguru import logger
+from starlette.status import HTTP_400_BAD_REQUEST, HTTP_403_FORBIDDEN
 
 from app.config import smtp_server, smtp_port, email_address, email_password
 from app.models import TaskModel, UserModel, MeetingModel
@@ -111,3 +112,15 @@ async def check_free_datetime_for_meet(
         message = f"У пользователя {user.email} есть встреча на это время"
         logger.error(message)
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=message)
+
+async def check_meet(meet: MeetingModel):
+    if meet.canceled:
+        message = "Встреча уже отменена"
+        logger.error(message)
+        raise HTTPException(status_code=HTTP_400_BAD_REQUEST, detail=message)
+
+async def check_admin(user: UserModel):
+    if not user.role == "admin":
+        message = "Отменять и назначать встречи может только Администратор"
+        logger.error(message)
+        raise HTTPException(status_code=HTTP_403_FORBIDDEN, detail=message)

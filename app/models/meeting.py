@@ -4,7 +4,7 @@ from datetime import datetime
 
 from fastapi_users_db_sqlalchemy.generics import GUID
 
-from sqlalchemy import DateTime, Table, Column, ForeignKey, Integer, String
+from sqlalchemy import DateTime, Table, Column, ForeignKey, Integer, String, Boolean
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 users_meetings = Table(
@@ -31,3 +31,4 @@ class MeetingModel(Base):
         cascade="save-update, merge",
         uselist=True,
     )
+    canceled: Mapped[bool] = mapped_column(Boolean, nullable=True)

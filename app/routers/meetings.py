@@ -1,22 +1,29 @@
 import uuid
 
 from fastapi import APIRouter, Depends, status
-from sqlalchemy import select
+from sqlalchemy import select, update
 from sqlalchemy.orm import selectinload
 from sqlalchemy.ext.asyncio import AsyncSession
+
+from app.auth.auth import fastapi_user_model
 from app.database import get_async_session
 from app import schemas
 from app.models import MeetingModel, UserModel
 
-from app.services import check_free_datetime_for_meet
+from app.services import check_free_datetime_for_meet, check_admin, check_meet
 
 router = APIRouter(prefix="/meetings", tags=["Meet"])
+
+current_active_user = fastapi_user_model.current_user()
 
 
 @router.post("/", status_code=status.HTTP_201_CREATED)
 async def create_meet(
-    meet: schemas.MeetCreate, session: AsyncSession = Depends(get_async_session)
+        meet: schemas.MeetCreate, session: AsyncSession = Depends(get_async_session),
+        user: UserModel = Depends(current_active_user)
 ):
+    await check_admin(user)
+
     meet_data = meet.model_dump()
     meet_data["date"] = meet_data["date"].replace(tzinfo=None)
 
@@ -45,12 +52,15 @@ async def create_meet(
 
 @router.get("/", status_code=status.HTTP_200_OK)
 async def get_meets_for_user(
-    user_id: uuid.UUID, session: AsyncSession = Depends(get_async_session)
+        user_id: uuid.UUID, session: AsyncSession = Depends(get_async_session)
 ):
     user = (
         await session.scalars(
             select(UserModel)
-            .where(UserModel.id == user_id)
+            .where(
+                UserModel.id == user_id,
+
+            )
             .options(selectinload(UserModel.meetings))
         )
     ).first()
@@ -62,6 +72,37 @@ async def get_meets_for_user(
                 f"Дата встречи - {meet.date}",
                 f"Название встречи - {meet.title}",
             )
-            for meet in user.meetings
+            for meet in user.meetings if not meet.canceled
         ]
     }
+
+
+@router.post("/cancel_meet/{meet_id}", response_model=schemas.MeetRead)
+async def cancel_meet(
+        meet_id: int,
+        session: AsyncSession = Depends(get_async_session),
+        user: UserModel = Depends(current_active_user)
+):
+    meet = (await session.scalars(select(MeetingModel).where(MeetingModel.id == meet_id))).first()
+
+    await check_meet(meet)
+    await check_admin(user)
+
+    meet_db = await session.execute(
+        update(MeetingModel)
+        .where(MeetingModel.id == meet_id)
+        .values(
+            canceled=True
+        )
+    )
+
+    await session.commit()
+
+    updated_meet = (await session.execute(
+        select(MeetingModel)
+        .where(MeetingModel.id == meet_id)
+        .options(selectinload(MeetingModel.participants))
+    )
+                    ).scalar_one()
+
+    return updated_meet
