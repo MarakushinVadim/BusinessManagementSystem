@@ -121,6 +121,12 @@ async def check_meet(meet: MeetingModel):
 
 async def check_admin(user: UserModel):
     if not user.role == "admin":
-        message = "Отменять и назначать встречи может только Администратор"
+        message = "Этот действие доступно только Администратору"
         logger.error(message)
         raise HTTPException(status_code=HTTP_403_FORBIDDEN, detail=message)
+
+async def check_user_exists(user: UserModel|None):
+    if not user:
+        message = "Пользователя с таким id не существует"
+        logger.error(message)
+        raise HTTPException(status_code=HTTP_400_BAD_REQUEST, detail=message)

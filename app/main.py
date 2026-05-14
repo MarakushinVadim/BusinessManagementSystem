@@ -46,6 +46,7 @@ admin.add_view(TaskAdminView)
 admin.add_view(TeamAdminView)
 
 app.include_router(auth_router)
+app.include_router(routers.users_router)
 app.include_router(routers.task_router)
 app.include_router(routers.comment_router)
 app.include_router(routers.meeting_router)

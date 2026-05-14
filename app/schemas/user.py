@@ -11,6 +11,10 @@ from pydantic import computed_field, BaseModel
 
 class UserRead(schemas.BaseUser[uuid.UUID]):
     role: Optional[RoleType] = None
+    id: uuid.UUID
+    name: Optional[str] = None
+    surname: Optional[str] = None
+    email: str
 
 class UserShort(BaseModel):
     id: uuid.UUID
@@ -34,6 +38,8 @@ class UserShort(BaseModel):
 
 
 class UserCreate(schemas.BaseUserCreate):
+    name: Optional[str] = None
+    surname: Optional[str] = None
     role: Optional[RoleType] = "user"
 
 
