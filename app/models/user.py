@@ -59,5 +59,15 @@ class UserModel(SQLAlchemyBaseUserTableUUID, Base):
         "MeetingModel", back_populates="participants", secondary="users_meetings"
     )
 
+    @property
+    def display_name(self) -> str:
+        if self.name and self.surname:
+            return f"{self.name}, {self.surname}"
+        elif self.name:
+            return f"{self.name}"
+        elif self.surname:
+            return f"{self.surname}"
+        return f"{self.email}"
+
     def __str__(self) -> str:
         return f"{self.email}"
