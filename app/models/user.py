@@ -53,7 +53,7 @@ class UserModel(SQLAlchemyBaseUserTableUUID, Base):
         "CommentModel", back_populates="users"
     )
 
-    ratings: Mapped["RatingModel"] = relationship("RatingModel", back_populates="user")
+    ratings: Mapped[list["RatingModel"]] = relationship("RatingModel", back_populates="user")
 
     meetings: Mapped[list["MeetingModel"]] = relationship(
         "MeetingModel", back_populates="participants", secondary="users_meetings"
