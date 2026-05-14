@@ -51,7 +51,11 @@ async def get_all_tasks(session: AsyncSession = Depends(get_async_session)):
         await session.scalars(
             select(TaskModel)
             .order_by(TaskModel.deadline.desc())
-            .options(selectinload(TaskModel.comments))
+            .options(
+                selectinload(TaskModel.comments),
+                selectinload(TaskModel.author),
+                selectinload(TaskModel.performer)
+            )
         )
     ).all()
 
@@ -174,7 +178,10 @@ async def detail_task(
     session: AsyncSession = Depends(get_async_session),
 ):
     current_task = (
-        await session.scalars(select(TaskModel).where(TaskModel.id == task_id))
+        await session.scalars(select(TaskModel).where(TaskModel.id == task_id).options(
+            selectinload(TaskModel.author),
+            selectinload(TaskModel.performer)
+        ))
     ).first()
 
     if not current_task:

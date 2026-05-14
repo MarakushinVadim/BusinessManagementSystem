@@ -7,6 +7,7 @@ from typing import Optional, TYPE_CHECKING
 
 if TYPE_CHECKING:
     from app.schemas.comment import CommentOut, CommentList
+    from app.schemas.user import UserShort
 
 
 class TaskCreate(BaseModel):
@@ -18,6 +19,8 @@ class TaskCreate(BaseModel):
 
 class TaskRead(TaskCreate):
     id: int = Field(description="ID задачи")
+    author: "UserShort"
+    performer: "UserShort"
     author_id: uuid.UUID = Field(description="ID автора")
     performer_id: Optional[uuid.UUID] = Field(description="ID исполнителя")
     comments: Optional[list["CommentOut"]] = []
@@ -44,5 +47,6 @@ class RatingCreate(BaseModel):
 
 
 from app.schemas.comment import CommentOut, CommentList
+from app.schemas.user import UserShort
 
 TaskRead.model_rebuild()

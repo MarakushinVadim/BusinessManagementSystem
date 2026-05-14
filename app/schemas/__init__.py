@@ -1,4 +1,4 @@
-from .user import UserCreate, UserUpdate, UserRead
+from .user import UserCreate, UserUpdate, UserRead, UserShort
 from .task import TaskCreate, TaskUpdate, TaskRead, RatingCreate
 from .comment import CommentCreate, CommentOut, CommentList
 from .meeting import MeetCreate
@@ -15,4 +15,5 @@ __all__ = [
     "CommentOut",
     "CommentList",
     "MeetCreate",
+    "UserShort"
 ]
