@@ -19,6 +19,8 @@ class UserCreate(schemas.BaseUserCreate):
 
 class UserUpdate(schemas.BaseUserUpdate):
     role: Optional[RoleType] = None
+    name: Optional[str] = None
+    surname: Optional[str] = None
 
 
 class UserShort(BaseModel):

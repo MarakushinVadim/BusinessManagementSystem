@@ -60,7 +60,7 @@ async def create_comment(
         **comment_data,
         task_id=current_task.id,
         user_id=current_user.id,
-        username=current_user.email
+        username=current_user.display_name
     )
 
     session.add(comment_db)

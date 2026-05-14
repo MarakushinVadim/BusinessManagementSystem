@@ -62,7 +62,7 @@ class UserModel(SQLAlchemyBaseUserTableUUID, Base):
     @property
     def display_name(self) -> str:
         if self.name and self.surname:
-            return f"{self.name}, {self.surname}"
+            return f"{self.name} {self.surname}"
         elif self.name:
             return f"{self.name}"
         elif self.surname:
