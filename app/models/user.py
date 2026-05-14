@@ -4,7 +4,7 @@ import enum
 
 from fastapi_users_db_sqlalchemy import SQLAlchemyBaseUserTableUUID
 
-from sqlalchemy import Enum, ForeignKey
+from sqlalchemy import Enum, ForeignKey, String
 from sqlalchemy.orm import relationship
 
 from typing import Literal, get_args
@@ -31,6 +31,8 @@ TeamRoleType = Literal["manager", "employee"]
 class UserModel(SQLAlchemyBaseUserTableUUID, Base):
     __tablename__ = "users"
 
+    name: Mapped[str] = mapped_column(String(25), nullable=True)
+    surname: Mapped[str] = mapped_column(String(50), nullable=True)
     role: Mapped[RoleType] = mapped_column(
         Enum(*get_args(RoleType), name="role_enum", metadata=Base.metadata),
         default="user",
