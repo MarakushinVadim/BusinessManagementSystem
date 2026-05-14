@@ -45,6 +45,18 @@ class TaskUpdate(BaseModel):
 class RatingCreate(BaseModel):
     rate: int = Field(ge=1, le=5)
 
+class Rating(BaseModel):
+    rate: int
+
+    class Config:
+        from_attributes=True
+
+class RatingList(BaseModel):
+    ratings: list["Rating"]
+
+    class Config:
+        from_attributes=True
+
 
 from app.schemas.comment import CommentOut, CommentList
 from app.schemas.user import UserShort

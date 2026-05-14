@@ -3,12 +3,14 @@ import uuid
 from fastapi import APIRouter, Depends, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, update
+from sqlalchemy.orm import selectinload
 
 from app.database import get_async_session
 from app.models import UserModel
 from app.auth.auth import fastapi_user_model
+# from app.schemas.task import RatingList
 from app.services import check_admin, check_user_exists
-from app.schemas import UserUpdate, UserRead
+from app.schemas import UserUpdate, UserRead, RatingList
 
 router = APIRouter(prefix="/auth/users", tags=["users"])
 
@@ -79,3 +81,14 @@ async def admin_update_user(
     )).first()
 
     return updated_db_user
+
+@router.get("/me/my_rates", response_model=RatingList)
+async def get_my_rates(
+        user: UserModel = Depends(current_active_user),
+        session: AsyncSession = Depends(get_async_session),
+):
+
+    await session.refresh(user, attribute_names=['ratings'])
+
+    return {"ratings": user.ratings}
+
