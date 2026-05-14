@@ -21,11 +21,3 @@ class UserUpdate(schemas.BaseUserUpdate):
     role: Optional[RoleType] = None
     name: Optional[str] = None
     surname: Optional[str] = None
-
-
-class UserShort(BaseModel):
-    id: uuid.UUID
-    username: str
-
-    class Config:
-        from_attributes = True
