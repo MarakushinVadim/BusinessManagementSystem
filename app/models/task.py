@@ -59,6 +59,15 @@ class TaskModel(Base):
         GUID(), ForeignKey("users.id"), nullable=True
     )
 
+    author: Mapped["UserModel"] = relationship(
+        "UserModel",
+        foreign_keys=[author_id]
+    )
+    performer: Mapped["UserModel"] = relationship(
+        "UserModel",
+        foreign_keys=[performer_id]
+    )
+
 
 class RatingModel(Base):
     __tablename__ = "ratings"
