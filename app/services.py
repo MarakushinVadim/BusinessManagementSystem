@@ -113,11 +113,13 @@ async def check_free_datetime_for_meet(
         logger.error(message)
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=message)
 
+
 async def check_meet(meet: MeetingModel):
     if meet.canceled:
         message = "Встреча уже отменена"
         logger.error(message)
         raise HTTPException(status_code=HTTP_400_BAD_REQUEST, detail=message)
+
 
 async def check_admin(user: UserModel):
     if not user.role == "admin":
@@ -125,7 +127,8 @@ async def check_admin(user: UserModel):
         logger.error(message)
         raise HTTPException(status_code=HTTP_403_FORBIDDEN, detail=message)
 
-async def check_user_exists(user: UserModel|None):
+
+async def check_user_exists(user: UserModel | None):
     if not user:
         message = "Пользователя с таким id не существует"
         logger.error(message)

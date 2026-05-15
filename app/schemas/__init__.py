@@ -17,5 +17,5 @@ __all__ = [
     "MeetCreate",
     "UserShort",
     "MeetRead",
-    "RatingList"
+    "RatingList",
 ]

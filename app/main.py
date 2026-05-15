@@ -50,6 +50,7 @@ app.include_router(routers.users_router)
 app.include_router(routers.task_router)
 app.include_router(routers.comment_router)
 app.include_router(routers.meeting_router)
+app.include_router(routers.calendar_router)
 
 
 @app.get("/")

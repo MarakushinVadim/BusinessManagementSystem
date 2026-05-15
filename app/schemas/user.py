@@ -16,6 +16,7 @@ class UserRead(schemas.BaseUser[uuid.UUID]):
     surname: Optional[str] = None
     email: str
 
+
 class UserShort(BaseModel):
     id: uuid.UUID
     name: Optional[str] = None
@@ -34,7 +35,7 @@ class UserShort(BaseModel):
         return f"{self.email}"
 
     class Config:
-        from_attributes=True
+        from_attributes = True
 
 
 class UserCreate(schemas.BaseUserCreate):

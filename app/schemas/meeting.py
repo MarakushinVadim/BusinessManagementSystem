@@ -18,8 +18,9 @@ class MeetRead(BaseModel):
     canceled: Optional[bool] = None
 
     class Config:
-        from_attributes=True
+        from_attributes = True
 
 
 from app.schemas.user import UserShort
+
 MeetRead.model_rebuild()
