@@ -133,3 +133,50 @@ async def check_user_exists(user: UserModel | None):
         message = "Пользователя с таким id не существует"
         logger.error(message)
         raise HTTPException(status_code=HTTP_400_BAD_REQUEST, detail=message)
+
+
+async def get_events(user: UserModel, day: datetime | None, month: datetime | None):
+    date_list = list()
+    meets_list = list()
+    tasks_list = list()
+    response = list()
+
+    print("first service month", month)
+
+    for meet in user.meetings:
+        meets_list.append(meet)
+        if meet.date.date() not in date_list:
+            if day and meet.date.date() != day.date():
+                continue
+
+        if month:
+            meet_date = meet.date.date().replace(day=1)
+            if month.date() != meet_date:
+                continue
+
+        date_list.append(meet.date.date())
+
+    for task in user.tasks:
+        tasks_list.append(task)
+        if task.deadline.date() not in date_list:
+            if day and task.deadline.date() != day:
+                continue
+
+            if month:
+                task_date = task.deadline.date().replace(day=1)
+                if month.date() != task_date:
+                    continue
+            date_list.append(task.deadline.date())
+
+    for n, date in enumerate(date_list):
+        response.append({str(date): [["tasks", []], ["meets", []]]})
+
+        for meet in meets_list:
+            if meet.date.date() == date:
+                response[n][str(date)][1][1].append(meet)
+
+        for task in tasks_list:
+            if task.deadline.date() == date:
+                response[n][str(date)][0][1].append(task)
+
+    return response
