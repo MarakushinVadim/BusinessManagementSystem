@@ -59,6 +59,8 @@ class UserModel(SQLAlchemyBaseUserTableUUID, Base):
         "MeetingModel", back_populates="participants", secondary="users_meetings"
     )
 
+    tasks: Mapped[list["TaskModel"]] = relationship("TaskModel", back_populates="performer", uselist=True)
+
     @property
     def display_name(self) -> str:
         if self.name and self.surname:
