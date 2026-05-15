@@ -4,7 +4,7 @@ import enum
 
 from fastapi_users_db_sqlalchemy import SQLAlchemyBaseUserTableUUID
 
-from sqlalchemy import Enum, ForeignKey, String
+from sqlalchemy import Enum, ForeignKey, String, desc
 from sqlalchemy.orm import relationship
 
 from typing import Literal, get_args
@@ -58,11 +58,17 @@ class UserModel(SQLAlchemyBaseUserTableUUID, Base):
     )
 
     meetings: Mapped[list["MeetingModel"]] = relationship(
-        "MeetingModel", back_populates="participants", secondary="users_meetings"
+        "MeetingModel",
+        back_populates="participants",
+        secondary="users_meetings",
+        order_by=lambda: desc("MeetingModel.date"),
     )
 
     tasks: Mapped[list["TaskModel"]] = relationship(
-        "TaskModel", back_populates="performer", foreign_keys="[TaskModel.performer_id]"
+        "TaskModel",
+        back_populates="performer",
+        foreign_keys="[TaskModel.performer_id]",
+        order_by=lambda: desc("TaskModel.deadline"),
     )
 
     @property
