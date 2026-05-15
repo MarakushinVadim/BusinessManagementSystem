@@ -1,9 +1,9 @@
 from datetime import datetime
 import uuid
 
-from pydantic import BaseModel, Field, EmailStr
+from pydantic import BaseModel, Field
 
-from typing import Optional, TYPE_CHECKING
+from typing import Optional, TYPE_CHECKING, Literal
 
 if TYPE_CHECKING:
     from app.schemas.comment import CommentOut, CommentList
@@ -14,13 +14,13 @@ class TaskCreate(BaseModel):
     title: str = Field(description="Название задачи")
     description: str = Field(description="Описание задачи")
     deadline: datetime = Field(description="Выполнить до:")
-    status: str = Field(description="Статус задачи")
+    status: Optional[str] = None
 
 
 class TaskRead(TaskCreate):
     id: int = Field(description="ID задачи")
     author: "UserShort"
-    performer: "UserShort"
+    performer: Optional["UserShort"] = []
     author_id: uuid.UUID = Field(description="ID автора")
     performer_id: Optional[uuid.UUID] = Field(description="ID исполнителя")
     comments: Optional[list["CommentOut"]] = []
@@ -40,6 +40,17 @@ class TaskUpdate(BaseModel):
     performer_id: Optional[uuid.UUID] = Field(
         default=None, description="ID исполнителя"
     )
+
+
+class TaskShort(BaseModel):
+    id: int
+    title: Optional[str] = None
+    description: Optional[str] = None
+    deadline: datetime
+    rating: Optional[int] = None
+
+
+TaskTuple = tuple[Literal["tasks"], list[TaskShort]]
 
 
 class RatingCreate(BaseModel):

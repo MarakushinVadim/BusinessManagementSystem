@@ -1,7 +1,7 @@
 from datetime import datetime
 
 from pydantic import BaseModel
-from typing import Optional, TYPE_CHECKING
+from typing import Optional, TYPE_CHECKING, Literal
 
 if TYPE_CHECKING:
     from app.schemas.user import UserShort
@@ -19,6 +19,16 @@ class MeetRead(BaseModel):
 
     class Config:
         from_attributes = True
+
+
+class MeetShort(BaseModel):
+    id: int
+    title: Optional[str] = None
+    date: datetime
+    canceled: Optional[bool] = None
+
+
+MeetTuple = tuple[Literal["meets"], list[MeetShort]]
 
 
 from app.schemas.user import UserShort

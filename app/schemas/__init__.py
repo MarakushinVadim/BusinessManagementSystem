@@ -1,7 +1,7 @@
 from .user import UserCreate, UserUpdate, UserRead, UserShort
-from .task import TaskCreate, TaskUpdate, TaskRead, RatingCreate, RatingList
+from .task import TaskCreate, TaskUpdate, TaskRead, RatingCreate, RatingList, TaskTuple
 from .comment import CommentCreate, CommentOut, CommentList
-from .meeting import MeetCreate, MeetRead
+from .meeting import MeetCreate, MeetRead, MeetTuple
 
 __all__ = [
     "UserUpdate",
@@ -10,6 +10,7 @@ __all__ = [
     "TaskCreate",
     "TaskUpdate",
     "TaskRead",
+    "TaskTuple",
     "RatingCreate",
     "CommentCreate",
     "CommentOut",
@@ -17,5 +18,6 @@ __all__ = [
     "MeetCreate",
     "UserShort",
     "MeetRead",
+    "MeetTuple",
     "RatingList",
 ]
