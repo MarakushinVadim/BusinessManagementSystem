@@ -91,8 +91,6 @@ async def check_current_task_exist(task: TaskModel):
 
 async def check_author(task: TaskModel, user: UserModel):
     if task.author_id != user.id:
-        print("author - ", task.author_id)
-        print("user -", user.id)
         message = "Вносить изменения в задачу может только ее автор!"
         logger.error(message)
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=message)
@@ -140,8 +138,6 @@ async def get_events(user: UserModel, day: datetime | None, month: datetime | No
     meets_list = list()
     tasks_list = list()
     response = list()
-
-    print("first service month", month)
 
     for meet in user.meetings:
         meets_list.append(meet)
