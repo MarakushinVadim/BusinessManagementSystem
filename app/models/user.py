@@ -61,14 +61,14 @@ class UserModel(SQLAlchemyBaseUserTableUUID, Base):
         "MeetingModel",
         back_populates="participants",
         secondary="users_meetings",
-        order_by=lambda: desc("MeetingModel.date"),
+        order_by="desc(MeetingModel.date)",
     )
 
     tasks: Mapped[list["TaskModel"]] = relationship(
         "TaskModel",
         back_populates="performer",
         foreign_keys="[TaskModel.performer_id]",
-        order_by=lambda: desc("TaskModel.deadline"),
+        order_by="desc(TaskModel.deadline)",
     )
 
     @property
