@@ -21,8 +21,8 @@ class MeetingModel(Base):
     __tablename__ = "meetings"
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    title: Mapped[str] = mapped_column(String(50), nullable=True)
-    description: Mapped[str] = mapped_column(String(500), nullable=True)
+    title: Mapped[str] = mapped_column(String(50), nullable=False)
+    description: Mapped[str] = mapped_column(String(500), nullable=False)
     date: Mapped[datetime] = mapped_column(DateTime, nullable=False)
     participants: Mapped[list["UserModel"]] = relationship(
         "UserModel",
