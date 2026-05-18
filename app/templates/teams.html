@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block content %}
+
+
+
+{% if user.role == "admin" %}
+<form action="{{ TEAM }}" method="POST">
+    <input type="text" name="users" required>
+    <input type="text" name="title" required>
+    <button type="submit">Создать команду</button>
+</form>
+{% endif %}
+
+
+
+
+
+{% endblock %}

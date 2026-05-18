@@ -6,13 +6,12 @@ from sqlalchemy import select, update
 
 from app.database import get_async_session
 from app.models import UserModel
-from app.auth.auth import fastapi_user_model
+from app.auth.auth import current_active_user
 from app.services import check_admin, check_user_exists
 from app.schemas import UserUpdate, UserRead, RatingList
 
 router = APIRouter(prefix="/auth/users", tags=["users"])
 
-current_active_user = fastapi_user_model.current_user()
 
 
 @router.delete("/admin_delete/{user_id}", status_code=status.HTTP_204_NO_CONTENT)

@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="calendar-box">
+    <h2>📅 Ваше расписание</h2>
+
+    {% if not events_data %}
+    <p class="empty-msg">Событий пока нет.</p>
+    {% endif %}
+
+    <!-- Цикл по списку дней в response -->
+    {% for day_dict in events_data %}
+    <!-- Извлекаем ключ-дату и массив данных из словаря -->
+    {% for date, content in day_dict.items() %}
+    <div class="day-block">
+        <h3 class="day-date">{{ date }}</h3>
+
+        <!-- 1. Задачи: берем content[0][1] -> это задачи -->
+        <div class="category-title">📝 Задачи</div>
+        {% if content.0.1 %}
+        <ul class="item-list">
+            {% for task in content.0.1 %}
+            <li>{{ task.title }}</li>
+            {% endfor %}
+        </ul>
+        {% else %}
+        <p class="empty-msg">Нет задач на этот день</p>
+        {% endif %}
+
+        <!-- 2. Встречи: берем content[1][1] -> это встречи -->
+        <div class="category-title">🤝 Встречи</div>
+        {% if content.1.1 %}
+        <ul class="item-list">
+            {% for meet in content.1.1 %}
+            <li class="meet-item">{{ meet.title }}</li> <!-- Замените .title на поле вашей модели Meeting -->
+            {% endfor %}
+        </ul>
+        {% else %}
+        <p class="empty-msg">Нет запланированных встреч</p>
+        {% endif %}
+
+    </div>
+    {% endfor %}
+    {% endfor %}
+</div>
+{% endblock %}

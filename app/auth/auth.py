@@ -93,3 +93,5 @@ admin_authentication_backend = AdminAuth(secret_key=SECRET_KEY)
 fastapi_user_model = FastAPIUsers[UserModel, uuid.UUID](
     get_user_manager, [auth_backend_cookie, auth_backend]
 )
+
+current_active_user = fastapi_user_model.current_user()

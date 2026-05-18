@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, status, HTTPException, Query
 
 from app import schemas
-from app.auth.auth import fastapi_user_model
+from app.auth.auth import current_active_user
 from sqlalchemy import select, update
 from sqlalchemy.orm import selectinload
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -16,7 +16,6 @@ router = APIRouter(
     tags=["tasks"],
 )
 
-current_active_user = fastapi_user_model.current_user()
 
 
 @router.post("/", response_model=schemas.TaskRead, status_code=status.HTTP_201_CREATED)

@@ -2,6 +2,7 @@ from .user import UserCreate, UserUpdate, UserRead, UserShort
 from .task import TaskCreate, TaskUpdate, TaskRead, RatingCreate, RatingList, TaskTuple
 from .comment import CommentCreate, CommentOut, CommentList
 from .meeting import MeetCreate, MeetRead, MeetTuple
+from .team import TeamCreate, TeamRead
 
 __all__ = [
     "UserUpdate",
@@ -20,4 +21,6 @@ __all__ = [
     "MeetRead",
     "MeetTuple",
     "RatingList",
+    "TeamCreate",
+    "TeamRead",
 ]

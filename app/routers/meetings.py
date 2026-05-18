@@ -5,7 +5,7 @@ from sqlalchemy import select, update
 from sqlalchemy.orm import selectinload
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.auth.auth import fastapi_user_model
+from app.auth.auth import current_active_user
 from app.database import get_async_session
 from app import schemas
 from app.models import MeetingModel, UserModel
@@ -13,8 +13,6 @@ from app.models import MeetingModel, UserModel
 from app.services import check_free_datetime_for_meet, check_admin, check_meet
 
 router = APIRouter(prefix="/meetings", tags=["Meet"])
-
-current_active_user = fastapi_user_model.current_user()
 
 
 @router.post("/", status_code=status.HTTP_201_CREATED)

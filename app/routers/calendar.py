@@ -1,10 +1,11 @@
 from datetime import datetime
 from typing import Optional
 
-from fastapi import APIRouter, Depends, status
+from fastapi import APIRouter, Depends, status, Request
 
 import app.schemas.calendar
-from app.auth.auth import fastapi_user_model
+from app.auth.auth import current_active_user
+from app.config import templates
 from app.models import UserModel
 from app.services import get_events
 from app.database import get_async_session
@@ -15,8 +16,6 @@ router = APIRouter(
     tags=["calendar"],
 )
 
-current_active_user = fastapi_user_model.current_user()
-
 
 @router.get(
     "/",
@@ -24,12 +23,21 @@ current_active_user = fastapi_user_model.current_user()
     status_code=status.HTTP_200_OK,
 )
 async def get_calendar(
+    request: Request,
     user: UserModel = Depends(current_active_user),
     session: AsyncSession = Depends(get_async_session),
 ):
     await session.refresh(user, attribute_names=["meetings", "tasks"])
 
     response = await get_events(user, None, None)
+
+    accept_header = request.headers.get("accept", "")
+    if "text/html" in accept_header:
+        return templates.TemplateResponse(
+            request=request,
+            name="calendar.html",
+            context={"events_data": response, "user": user},
+        )
 
     return response
 

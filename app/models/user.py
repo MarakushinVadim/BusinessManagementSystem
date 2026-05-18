@@ -43,7 +43,7 @@ class UserModel(SQLAlchemyBaseUserTableUUID, Base):
         nullable=True,
     )
 
-    team_id: Mapped[int] = mapped_column(ForeignKey("teams.id"), nullable=True)
+    team_id: Mapped[int] = mapped_column(ForeignKey("teams.id", ondelete="SET NULL"), nullable=True)
 
     team: Mapped["TeamModel"] = relationship(
         "TeamModel", back_populates="users", foreign_keys=[team_id]

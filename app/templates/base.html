@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Шаблон базовый</title>
+    <link rel="stylesheet" href="../../static/style.css">
+</head>
+<body class="bg-light">
+
+    <nav class="nav-bar">
+        <ul class="nav-list">
+
+            <li><a href="{{ BASE }}" class="nav-link">Главная</a></li>
+            <li><a href="#" class="nav-link">О нас</a></li>
+            <li><a href="#" class="nav-link">Услуги</a></li>
+            <li><a href="#" class="nav-link">Контакты</a></li>
+            {% if user %}
+            <li><a class="nav-link">{{user.display_name}}</a></li>
+            <li><a href="{{ LOGOUT }}"  class="nav-link">Выход</a></li>
+            {% else %}
+            <li><a href="{{ LOGIN }}" class="nav-link">Войти</a></li>
+            {% endif %}
+        </ul>
+    </nav>
+
+
+    {% block content %}
+    {% endblock %}
+
+
+</body>
+</html>

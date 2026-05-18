@@ -18,7 +18,11 @@ smtp_port = os.getenv("EMAIL_PORT")
 email_address = os.getenv("EMAIL")
 email_password = os.getenv("EMAIL_PASSWORD")
 
+
+
 templates = Jinja2Templates(directory="app/templates")
 
 templates.env.globals.update(LOGOUT="http://127.0.0.1:8000/logout")
 templates.env.globals.update(LOGIN="http://127.0.0.1:8000/login")
+templates.env.globals.update(BASE="http://127.0.0.1:8000/")
+templates.env.globals.update(TEAM="http://127.0.0.1:8000/team")
