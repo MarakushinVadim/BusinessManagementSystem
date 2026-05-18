@@ -8,7 +8,7 @@ from fastapi.security import OAuth2PasswordRequestForm
 from app.auth.auth import auth_backend, auth_backend_cookie
 from app.auth.manager import get_user_manager, get_user_manager_context
 from app.config import templates
-from app.models import UserModel as User, UserModel
+from app.models import UserModel as User
 from app.schemas import UserRead, UserCreate, UserUpdate
 
 fastapi_user = FastAPIUsers[User, uuid.UUID](
@@ -34,13 +34,12 @@ auth_router.include_router(
 @auth_router.get("/login", response_class=HTMLResponse)
 async def get_login_page(request: Request):
     return templates.TemplateResponse(
-        request=request,  # Передаем request явно
-        name="login.html",  # Имя файла шаблона
+        request=request,
+        name="login.html",
         context={},
     )
 
 
-# 2. POST: Обрабатываем чистый HTML-форм сабмит
 @auth_router.post("/login")
 async def login_submit(
     request: Request,
