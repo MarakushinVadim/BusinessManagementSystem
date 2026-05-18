@@ -1,5 +1,6 @@
 from fastapi import HTTPException, status
 
+
 import smtplib
 import socket
 from email.mime.multipart import MIMEMultipart
@@ -141,9 +142,10 @@ async def get_events(user: UserModel, day: datetime | None, month: datetime | No
 
     for meet in user.meetings:
         meets_list.append(meet)
-        if meet.date.date() not in date_list:
-            if day and meet.date.date() != day.date():
-                continue
+        if meet.date.date() in date_list:
+            continue
+        if day and meet.date.date() != day.date():
+            continue
 
         if month:
             meet_date = meet.date.date().replace(day=1)
@@ -154,15 +156,16 @@ async def get_events(user: UserModel, day: datetime | None, month: datetime | No
 
     for task in user.tasks:
         tasks_list.append(task)
-        if task.deadline.date() not in date_list:
-            if day and task.deadline.date() != day:
-                continue
+        if task.deadline.date() in date_list:
+            continue
+        if day and task.deadline.date() != day:
+            continue
 
-            if month:
-                task_date = task.deadline.date().replace(day=1)
-                if month.date() != task_date:
-                    continue
-            date_list.append(task.deadline.date())
+        if month:
+            task_date = task.deadline.date().replace(day=1)
+            if month.date() != task_date:
+                continue
+        date_list.append(task.deadline.date())
 
     for n, date in enumerate(date_list):
         response.append({str(date): [["tasks", []], ["meets", []]]})

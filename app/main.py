@@ -2,7 +2,8 @@ from collections.abc import AsyncGenerator
 from contextlib import asynccontextmanager
 
 from redis import asyncio as aioredis
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
+from fastapi.staticfiles import StaticFiles
 from sqladmin import Admin
 
 from app.auth.auth import admin_authentication_backend
@@ -12,7 +13,7 @@ from starlette.middleware.sessions import SessionMiddleware
 
 from app import routers
 from app.database import engine
-from app.config import SECRET_KEY
+from app.config import SECRET_KEY, templates
 from app.models import UserAdminView, TaskAdminView, TeamAdminView
 
 logger.add("info.log")
@@ -45,6 +46,9 @@ admin.add_view(UserAdminView)
 admin.add_view(TaskAdminView)
 admin.add_view(TeamAdminView)
 
+app.mount("/static", StaticFiles(directory="static"), name="static")
+
+
 app.include_router(auth_router)
 app.include_router(routers.users_router)
 app.include_router(routers.task_router)
@@ -54,5 +58,6 @@ app.include_router(routers.calendar_router)
 
 
 @app.get("/")
-async def get_main():
-    return {"message": "hello"}
+async def get_main(request: Request):
+
+    return templates.TemplateResponse(request=request, name="base.html")

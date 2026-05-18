@@ -4,6 +4,7 @@ from fastapi_users import FastAPIUsers
 from fastapi_users.authentication import (
     AuthenticationBackend,
     BearerTransport,
+    CookieTransport,
     JWTStrategy,
 )
 from sqladmin.authentication import AuthenticationBackend as AdminAuthBack
@@ -25,6 +26,19 @@ def get_jwt_strategy() -> JWTStrategy:
 auth_backend = AuthenticationBackend(
     name="jwt",
     transport=bearer_transport,
+    get_strategy=get_jwt_strategy,
+)
+
+cookie_transport = CookieTransport(
+    cookie_name="fastapiusersauth",
+    cookie_max_age=3600,
+    cookie_httponly=True,
+    cookie_samesite="lax",
+)
+
+auth_backend_cookie = AuthenticationBackend(
+    name="jwt_cookie",
+    transport=cookie_transport,
     get_strategy=get_jwt_strategy,
 )
 
@@ -76,5 +90,5 @@ class AdminAuth(AdminAuthBack):
 admin_authentication_backend = AdminAuth(secret_key=SECRET_KEY)
 
 fastapi_user_model = FastAPIUsers[UserModel, uuid.UUID](
-    get_user_manager, [auth_backend]
+    get_user_manager, [auth_backend_cookie, auth_backend]
 )
