@@ -31,6 +31,7 @@ auth_backend = AuthenticationBackend(
 
 cookie_transport = CookieTransport(
     cookie_name="fastapiusersauth",
+    cookie_path="/",
     cookie_max_age=3600,
     cookie_httponly=True,
     cookie_samesite="lax",
